@@ -35,7 +35,7 @@ ul { padding-left:20px; }
 <input type="number" id="reps" placeholder="回数">
 <input type="number" id="sets" placeholder="セット数">
 <button onclick="saveWorkout()">保存</button>
-
+<button onclick="exportCSV()">CSV書き出し</button>
 <p id="maxDisplay"></p>
 
 <select id="exerciseSelect" onchange="drawExerciseChart()">
@@ -156,6 +156,26 @@ drawBodyChart();
 updateMax();
 populateSelect();
 displayWorkouts();
+function exportCSV() {
+  const data = JSON.parse(localStorage.getItem("workoutData")) || [];
+  if (data.length === 0) {
+    alert("データがありません");
+    return;
+  }
+
+  let csv = "日付,体重,体脂肪,種目,重量,回数\n";
+
+  data.forEach(d => {
+    csv += `${d.date},${d.weight},${d.bodyfat},${d.exercise},${d.weightLifted},${d.reps}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "workout_data.csv";
+  a.click();
+}
 </script>
 
 </body>
